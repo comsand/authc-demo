@@ -71,7 +71,7 @@ const requireAuth = async (fn, targetUrl) => {
   return login(targetUrl);
 };
 
-const updateData = async (token)=>{
+const getUserInfio = async (token)=>{
   return new Promise(async(resolve,reject)=>{
     const accessToken = token?token:await auth0.getTokenSilently();
     const instance = axios.create({
@@ -89,9 +89,8 @@ const getNFTs = async (token) =>{
     const instance = axios.create({
       headers: {'Authorization': 'Bearer '+accessToken}
     });
-    instance.get('https://ucollex.stage.authc.io/oauth/userinfo').then(res=>{
+    instance.get('https://apiv2-stage.ucollex.io/nft/api/v2/me/tokens').then(res=>{
       resolve(res)
-      console.log('res',res);
     })
   })
 }

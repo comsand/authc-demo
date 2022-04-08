@@ -63,13 +63,19 @@ const updateUI = async () => {
     if (isAuthenticated) {
       // const user = await auth0.getUser();
       const accessToken = await auth0.getTokenSilently();
-      const {data} = await updateData(accessToken)
-      // await getNFTs(accessToken)
+      const {data} = await getUserInfio(accessToken)
       const user = data
-      console.log('user',user)
+      const res = await getNFTs(accessToken)
+      const nfts = res.data
 
       document.getElementById("profile-data").innerText = JSON.stringify(
         user,
+        null,
+        2
+      );
+
+      document.getElementById("nft-data").innerText = JSON.stringify(
+        nfts,
         null,
         2
       );
