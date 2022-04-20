@@ -21,13 +21,13 @@ const login = async (targetUrl,type=1) => {
     }
     if(type===1){
       // 登录托管
-      auth0.loginWithRedirect(options)
+      authc.loginWithRedirect(options)
     }else if(type===2){
       // 弹出页面
-      auth0.loginWithPopup(options)
+      authc.loginWithPopup(options)
     }else{
       // 内嵌登录组件
-      auth0.loginWithIframe(options)
+      authc.loginWithIframe(options)
     }
   } catch (err) {
     console.log("Log in failed", err);
