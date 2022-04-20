@@ -5,19 +5,30 @@ let authc = null;
 /**
  * Starts the authentication flow
  */
-const login = async (targetUrl) => {
+const login = async (targetUrl,type=1) => {
   try {
     console.log("Logging in", targetUrl);
 
     const options = {
-      redirect_uri: window.location.origin
+      redirect_uri: window.location.origin,
+      acr_values:'',
+      authorization_endpoint:'oauth/authorize',
+      response_mode:'fragment'
     };
 
     if (targetUrl) {
       options.appState = { targetUrl };
     }
-
-    authc.loginWithRedirect(options)
+    if(type===1){
+      // 登录托管
+      auth0.loginWithRedirect(options)
+    }else if(type===2){
+      // 弹出页面
+      auth0.loginWithPopup(options)
+    }else{
+      // 内嵌登录组件
+      auth0.loginWithIframe(options)
+    }
   } catch (err) {
     console.log("Log in failed", err);
   }
