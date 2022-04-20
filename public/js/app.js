@@ -1,6 +1,6 @@
 
-// The Auth0 client, initialized in configureClient()
-let auth0 = null;
+// The Authc client, initialized in configureClient()
+let authc = null;
 
 /**
  * Starts the authentication flow
@@ -17,7 +17,7 @@ const login = async (targetUrl) => {
       options.appState = { targetUrl };
     }
 
-    auth0.loginWithRedirect(options)
+    authc.loginWithRedirect(options)
   } catch (err) {
     console.log("Log in failed", err);
   }
@@ -29,7 +29,7 @@ const login = async (targetUrl) => {
 const logout = () => {
   try {
     console.log("Logging out");
-    auth0.logout({
+    authc.logout({
       post_logout_redirect_uri: window.location.origin
     });
   } catch (err) {
@@ -43,16 +43,15 @@ const logout = () => {
 const fetchAuthConfig = () => fetch("/auth_config.json");
 
 /**
- * Initializes the Auth0 client
+ * Initializes the Authc client
  */
 const configureClient = async () => {
   const response = await fetchAuthConfig();
   const config = await response.json();
 
-  auth0 = await createAuth0Client({
+  authc = await createAuthcClient({
     domain: config.domain,
     client_id: config.clientId,
-    issuer: "https://" + config.domain,
   });
 };
 
@@ -62,7 +61,7 @@ const configureClient = async () => {
  * @param {*} fn The function to execute if the user is logged in
  */
 const requireAuth = async (fn, targetUrl) => {
-  const isAuthenticated = await auth0.isAuthenticated();
+  const isAuthenticated = await authc.isAuthenticated();
 
   if (isAuthenticated) {
     return fn();
@@ -72,12 +71,16 @@ const requireAuth = async (fn, targetUrl) => {
 };
 
 const getUserInfio = async (token)=>{
+
+  const response = await fetchAuthConfig();
+  const config = await response.json();
+
   return new Promise(async(resolve,reject)=>{
-    const accessToken = token?token:await auth0.getTokenSilently();
+    const accessToken = token?token:await authc.getTokenSilently();
     const instance = axios.create({
       headers: {'Authorization': 'Bearer '+accessToken}
     });
-    instance.get('https://ucollex.stage.authc.io/oauth/userinfo').then(res=>{
+    instance.get('https://' +config.domain+ '/oauth/userinfo').then(res=>{
       resolve(res)
     })
   })
@@ -85,7 +88,7 @@ const getUserInfio = async (token)=>{
 
 const getNFTs = async (token) =>{
   return new Promise(async(resolve,reject)=>{
-    const accessToken = token?token:await auth0.getTokenSilently();
+    const accessToken = token?token:await authc.getTokenSilently();
     const instance = axios.create({
       headers: {'Authorization': 'Bearer '+accessToken}
     });
@@ -119,7 +122,7 @@ window.onload = async () => {
     }
   });
 
-  const isAuthenticated = await auth0.isAuthenticated();
+  const isAuthenticated = await authc.isAuthenticated();
 
   if (isAuthenticated) {
     console.log("> User is authenticated");
@@ -136,7 +139,7 @@ window.onload = async () => {
   if (shouldParseResult) {
     console.log("> Parsing redirect");
     try {
-      const result = await auth0.handleRedirectCallback();
+      const result = await authc.handleRedirectCallback();
 
       if (result.appState && result.appState.targetUrl) {
         showContentFromUrl(result.appState.targetUrl);

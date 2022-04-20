@@ -58,11 +58,11 @@ const showContent = (id) => {
  */
 const updateUI = async () => {
   try {
-    const isAuthenticated = await auth0.isAuthenticated();
+    const isAuthenticated = await authc.isAuthenticated();
     
     if (isAuthenticated) {
-      // const user = await auth0.getUser();
-      const accessToken = await auth0.getTokenSilently();
+      // const user = await authc.getUser();
+      const accessToken = await authc.getTokenSilently();
       const {data} = await getUserInfio(accessToken)
       const user = data
       const res = await getNFTs(accessToken)
