@@ -24,10 +24,22 @@ const login = async (targetUrl,type=1) => {
       authc.loginWithRedirect(options)
     }else if(type===2){
       // 弹出页面
-      authc.loginWithPopup(options)
+      let result = authc.loginWithPopup(options)
+      result.then(res=>{
+        console.log('登录成功',res)
+        updateUI()
+      }).catch(err=>{
+        console.log('登录失败',err)
+      })
     }else{
       // 内嵌登录组件
-      authc.loginWithIframe(options)
+      let promise = authc.loginWithIframe(options)
+      promise.then(res=>{
+        console.log('登录成功',res)
+        updateUI()
+      }).catch(err=>{
+        console.log('登录失败',err)
+      })
     }
   } catch (err) {
     console.log("Log in failed", err);
