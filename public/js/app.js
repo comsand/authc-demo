@@ -103,7 +103,13 @@ const getUserInfio = async (token)=>{
     const instance = axios.create({
       headers: {'Authorization': 'Bearer '+accessToken}
     });
-    instance.get('https://' +config.domain+ '/oauth/userinfo').then(res=>{
+    let url = ''
+    if (!/^https?:\/\//.test(config.domain)) {
+      url = `https://${config.domain}`;
+    }else{
+      url = config.domain
+    }
+    instance.get(url + '/oauth/userinfo').then(res=>{
       resolve(res)
     })
   })
