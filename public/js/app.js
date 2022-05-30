@@ -75,6 +75,8 @@ const configureClient = async () => {
   authc = await createAuthcClient({
     domain: config.domain,
     client_id: config.clientId,
+    useRefreshTokens: true,
+    cacheLocation: 'localstorage', 
   });
 };
 
@@ -162,7 +164,7 @@ window.onload = async () => {
 
   console.log("> User not authenticated");
 
-  const query = window.location.search;
+  const query = window.location.search||window.location.hash;
   const shouldParseResult = query.includes("code=") && query.includes("state=");
 
   if (shouldParseResult) {
